@@ -1,25 +1,105 @@
-import logo from './logo.svg';
-import './App.css';
+import React, {useEffect, useState} from 'react';
+import {Timeline} from "./Timeline";
+import {Header} from "./Header";
+import {Footer, navOptions} from "./Footer";
+import {initialGameState, saveToLocalstorage} from "./gameLogic";
+import {TeamSetup} from "./Teams";
+
+
+const _initialGameState = initialGameState()
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const [navIndex, setNavIndex] = useState(navOptions.teams)
+    const [scrollPosition, setScrollPosition] = useState({});
+
+    const [teams, setTeams] = useState(_initialGameState.teams)
+    const [timeline, setTimeline] = useState(_initialGameState.timeline)
+
+    function reset() {
+        const state = initialGameState()
+        setTeams(state.teams)
+        setTimeline(state.timeline)
+        saveToLocalstorage(state)
+    }
+
+    useEffect(() => {
+        const timeline = JSON.parse(localStorage.getItem("timeline"))
+        const teams = JSON.parse(localStorage.getItem("teams"))
+        const nav = JSON.parse(localStorage.getItem("navIndex"))
+        if (timeline) { setTimeline(timeline) }
+        if (teams) { setTeams(teams) }
+        if (nav !== undefined) { setNavIndex(nav) }
+    }, [])
+
+    useEffect(() => {
+        localStorage.setItem("navIndex", JSON.stringify(navIndex))
+
+        const handleScroll = () => {
+            let newState = {}
+            newState[navIndex] = window.scrollY
+            setScrollPosition(state => ({...state, ...newState}))
+        }
+
+        window.addEventListener("scroll", handleScroll);
+
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+        };
+
+    }, [navIndex])
+
+
+    useEffect(() => {
+        try {
+            navIndex === navOptions.timeline && document.getElementById("defaultScroll").scrollIntoView()
+            navIndex === navOptions.teams && window.scrollTo({
+                top: 0,
+                behavior: 'auto'
+            })
+        } catch (e) {}
+
+        /*
+        let position = scrollPosition[navIndex]
+
+        try {
+            //console.log(navIndex)
+            //console.log(scrollPosition)
+            //console.log(scrollPosition[navIndex])
+            position === undefined ?
+                document.getElementById("defaultScroll").scrollIntoView() :
+                window.scrollTo({
+                    top: position,
+                    behavior: 'auto'
+                })
+        } catch (e) {}
+        */
+
+    }, [navIndex])
+
+    return (
+        <div className={"bg-gray-50 min-h-screen"}>
+            <Header teams={teams}/>
+
+            <Timeline
+                className={navIndex === navOptions.timeline ? "" : "hidden"}
+                teams={teams}
+                timeline={timeline}
+                setTimeline={setTimeline}
+                setTeams={setTeams}
+            />
+
+            {navIndex === navOptions.teams && <TeamSetup
+                teams={teams}
+                setTeams={setTeams}
+                reset={reset}
+            />}
+
+            {navIndex === navOptions.overview && <div>Übersicht</div>}
+
+            <Footer navIndex={navIndex} setNavIndex={setNavIndex}/>
+        </div>
+    )
 }
+
 
 export default App;
