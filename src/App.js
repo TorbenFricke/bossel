@@ -4,6 +4,7 @@ import {Header} from "./Header";
 import {Footer, navOptions} from "./Footer";
 import {initialGameState, saveToLocalstorage} from "./gameLogic";
 import {TeamSetup} from "./Teams";
+import {Overview} from "./Overview";
 
 
 const _initialGameState = initialGameState()
@@ -80,13 +81,13 @@ function App() {
         <div className={"bg-gray-50 min-h-screen"}>
             <Header teams={teams}/>
 
-            <Timeline
-                className={navIndex === navOptions.timeline ? "" : "hidden"}
+            {navIndex === navOptions.timeline && <Timeline
+                //className={navIndex === navOptions.timeline ? "" : "hidden"}
                 teams={teams}
                 timeline={timeline}
                 setTimeline={setTimeline}
                 setTeams={setTeams}
-            />
+            />}
 
             {navIndex === navOptions.teams && <TeamSetup
                 teams={teams}
@@ -94,7 +95,10 @@ function App() {
                 reset={reset}
             />}
 
-            {navIndex === navOptions.overview && <div>Übersicht</div>}
+            {navIndex === navOptions.overview && <Overview
+                teams={teams}
+                timeline={timeline}
+            />}
 
             <Footer navIndex={navIndex} setNavIndex={setNavIndex}/>
         </div>

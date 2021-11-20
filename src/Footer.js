@@ -1,6 +1,6 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import React from "react";
-import {faBowlingBall, faUserFriends} from "@fortawesome/free-solid-svg-icons";
+import {faBowlingBall, faTable, faUserFriends} from "@fortawesome/free-solid-svg-icons";
 //faTable
 
 
@@ -27,6 +27,12 @@ export function Footer({navIndex, setNavIndex, ...props}) {
                     onClick={() => setNavIndex(navOptions.teams)}>
                     Teams
                 </FooterNavButton>
+                <FooterNavButton
+                    icon={faTable}
+                    active={navIndex === navOptions.overview}
+                    onClick={() => setNavIndex(navOptions.overview)}>
+                    Überblick
+                </FooterNavButton>
             </div>
         </div>
     )
@@ -37,7 +43,7 @@ function FooterNavButton({active, color, ...props}) {
     const inactiveClass = `hover:text-black`
     return (
         <button
-            className={`text-gray-500 text-center h-12 px-4 py-auto rounded-xl flex-grow transition ${active ? activeClass : inactiveClass} ` + props.className}
+            className={`text-gray-500 text-center h-12 px-4 py-auto rounded-xl flex-1 transition ${active ? activeClass : inactiveClass} ` + props.className}
             onClick={props.onClick}
         >
             <div>
