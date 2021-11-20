@@ -38,11 +38,11 @@ export function Timeline({timeline, teams, throws, setTimeline, className, ...pr
     }
 
     return (
-        <div className={`px-2 py-2 ` + className}>
+        <div className={className}>
             <div className={"max-w-md mx-auto"}>
                 <div className={"text-center mb-2"}>
                     {historyLength < timeline.length ?
-                        <div>
+                        <div className={"mt-3"}>
                             <RoundButtonSmall onClick={() => setHistoryLength(historyLength + 10)}>
                                 Weitere Anzeigen...
                             </RoundButtonSmall>
@@ -117,7 +117,7 @@ function TimelinePlayer({setTimeline, player, throws, ...props}) {
 
     return (
         <div
-            className={`shadow-md first:rounded-t-xl last:rounded-b-xl first:border-t border-b border-l border-r
+            className={`first:border-t border-b
             pl-5 pr-2 h-14 text-${color}-600 ` + classes}
             onClick={props.onClick}
         >
@@ -143,7 +143,7 @@ function TimelinePlayer({setTimeline, player, throws, ...props}) {
 
 function ThrowButtons(props) {
     return (
-        <div className={"mt-2 flex"}>
+        <div className={"flex mt-2"}>
             <RoundButton className={"flex-grow mr-1"} color={"green"} onClick={props.onThrow}>
                 <FontAwesomeIcon icon={icons[actions.throw]} className={"mr-2"}/>
                 Werfen

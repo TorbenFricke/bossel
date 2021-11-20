@@ -3,7 +3,7 @@ import React from "react";
 export function Header({teams, throws}) {
     return (
         <div className={"sticky bg-white top-0 h-16 w-full flex px-7 py-2 shadow-md"}>
-            <div className={"font-bold text-gray-600 my-auto"}>Würfe:</div>
+            <div className={"font-bold text-gray-600 my-auto"}>Boßel</div>
             <div className={"flex-grow"}/>
             {
                 teams.map(team => {
