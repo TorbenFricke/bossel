@@ -24,7 +24,8 @@ export function TeamSetup({teams, setTeams, reset, throws, ...props}) {
                 />
             })}
             <button
-                className={"w-full rounded-xl bg-white shadow-md py-3 text-blue-600 text-center hover:bg-blue-100"}
+                className={"w-full rounded-xl shadow-md py-3 text-center border bg-white text-blue-600 " +
+                "hover:bg-blue-100 dark:bg-gray-800 dark:border-gray-600 dark:text-blue-400"}
                 onClick={() => setTeams([...teams, newTeam()])}
             >
                 <FontAwesomeIcon className={"mr-2"} icon={faUsers}/>
@@ -38,9 +39,9 @@ export function TeamSetup({teams, setTeams, reset, throws, ...props}) {
 
 function InfoBox() {
     return (
-        <p className={"text-center"}>
+        <p className={"text-center dark:text-gray-400"}>
             Alle Daten werden <a
-                className={"underline text-blue-700"}
+                className={"underline text-blue-700 dark:text-blue-500"}
                 href={"https://de.wikipedia.org/wiki/Web_Storage#localStorage"}
                 rel={"noreferrer"}
                 target={"_blank"}
@@ -59,7 +60,8 @@ function ResetButton({reset, ...props}) {
     return (
         <div>
             <button
-                className={"w-full rounded-xl bg-white shadow-md py-3 text-red-600 text-center hover:bg-red-200"}
+                className={"w-full rounded-xl bg-white dark:b shadow-md py-3 text-red-600 text-center " +
+                "hover:bg-red-200 dark:bg-gray-800 dark:border-gray-600 dark:text-red-400 border"}
                 onClick={() => setShowModal(true)}
             >
                 <FontAwesomeIcon className={"mr-2"} icon={faRedo}/>
@@ -96,7 +98,7 @@ function ResetButton({reset, ...props}) {
 function Team({team, setTeam, deleteTeam, throws, ...props}) {
     return (
         <div>
-            <div className={`w-100 rounded-xl bg-white border bg-${team.color}-100 shadow-md p-3`}>
+            <div className={`w-100 rounded-xl bg-${team.color}-100 dark:bg-${team.color}-800 shadow-md p-3`}>
                 <ColorSelector
                     className={"float-right mb-2"}
                     color={team.color}
@@ -126,6 +128,7 @@ function Team({team, setTeam, deleteTeam, throws, ...props}) {
                 </div>
                 <div>
                     <GroupButton
+                        color={"blue"}
                         onClick={() => {
                             const _player = newPlayer("")
                             team.players.push(_player)
@@ -138,18 +141,17 @@ function Team({team, setTeam, deleteTeam, throws, ...props}) {
                             },0)
                         }}
                     >
-                        <div className={"text-blue-600"}>
-                            <FontAwesomeIcon className={"mr-2"} icon={faPlus}/>
-                            Neuer Spieler
-                        </div>
+                        <FontAwesomeIcon className={"mr-2"} icon={faPlus}/>
+                        Neuer Spieler
                     </GroupButton>
                     {throws[team.id] === 0 &&
                         <GroupButton
+                            color={"red"}
                             onClick={() => {
                                 deleteTeam()
                             }}
                         >
-                            <div className={"text-red-600"}>
+                            <div className={"text-red-400"}>
                                 <FontAwesomeIcon className={"mr-2"} icon={faTrashAlt}/>
                                 Team Löschen
                             </div>
@@ -161,11 +163,14 @@ function Team({team, setTeam, deleteTeam, throws, ...props}) {
     )
 }
 
-function GroupButton({onClick, className="", ...props}) {
+function GroupButton({onClick, className="", color="blue", ...props}) {
     return (
         <button
-            className={`first:rounded-t-xl last:rounded-b-xl border-gray-100 border-b last:border-b-0 w-full px-3 
-            py-2 bg-white transition shadow-sm ` + className}
+            className={`
+            first:rounded-t-xl last:rounded-b-xl border-b last:border-b-0 w-full px-3 py-2 transition shadow-sm 
+            bg-white dark:bg-gray-900 border-gray-100 dark:border-gray-100 text-${color}-600 dark:text-gray-300
+            dark:bg-opacity-30 dark:border-opacity-40
+            ` + className}
             onClick={onClick}
         >
             {props.children}
@@ -178,15 +183,18 @@ function Player({player, setPlayer, deletePlayer, color, throwCount, ...props}) 
         <div className={"flex"}>
             <button onClick={() => deletePlayer()}>
                 <FontAwesomeIcon
-                    className={throwCount > 0 ? "text-gray-400" : ` text-${color}-600`}
+                    className={throwCount > 0 ?
+                        `text-gray-400 dark:text-${color}-700` :
+                        `text-${color}-600 dark:text-white`}
                     icon={faTrashAlt}
                 />
             </button>
             <input
                 className={`appearance-none border w-full py-1 px-0 ml-3 leading-tight
-                focus:outline-none focus:shadow-outline focus:border-${color}-800
+                focus:outline-none focus:shadow-outline 
+                focus:border-${color}-800 dark:focus:border-${color}-200
                 rounded-none border-b-2 border-l-0 border-r-0 border-t-0 bg-transparent
-                mr-2 border-${color}-200 text-${color}-600
+                mr-2 border-${color}-200 text-${color}-600 dark:border-${color}-500 dark:text-white
                 `}
                 id={props.inputId}
                 type="text"
@@ -206,7 +214,7 @@ function ColorSelector({color, setColor, ...props}) {
     return (
         <button className={props.className}>
             <div
-                className={`rounded-full w-10 h-10 bg-${color}-500 text-center py-2`}
+                className={`rounded-full w-10 h-10 bg-${color}-500 dark:bg-${color}-600 text-center py-2`}
                 onClick={() => setEditing(!editing)}>
                 <FontAwesomeIcon className={"text-white"} icon={faPen}/>
             </div>
@@ -243,7 +251,7 @@ function Modal({closeModal, children}) {
                 }
             }}
         >
-            <div className={"rounded-2xl bg-white shadow-lg my-auto mx-5 w-full p-4"}>
+            <div className={"rounded-2xl bg-white dark:bg-gray-900 dark:text-gray-200 shadow-lg my-auto mx-5 w-full p-4"}>
                 {children}
             </div>
         </div>

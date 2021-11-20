@@ -48,7 +48,7 @@ export function Timeline({timeline, teams, throws, setTimeline, className, ...pr
                             <RoundButtonSmall onClick={() => setHistoryLength(historyLength + 10)}>
                                 Weitere Anzeigen...
                             </RoundButtonSmall>
-                            <div className={"text-gray-600 ml-2 mt-1 text-sm"}>
+                            <div className={"text-gray-500 ml-2 mt-1 text-sm"}>
                                 {timeline.length - historyLength} ausgebledet
                                 <a href={"#defaultScroll"} className={"underline ml-2"}>
                                     Nach unten...
@@ -83,11 +83,11 @@ export function Timeline({timeline, teams, throws, setTimeline, className, ...pr
                 </div>
                 {timeline.length > 0 &&
                     <div className={"mx-2 my-2 flex"} id={"defaultScroll"}>
-                        <div className={"border-t border-gray-300 h-0 flex-grow  mt-3"}/>
-                        <div className={"flex-initial text-gray-600 mx-2"}>
+                        <div className={"border-t border-gray-300 dark:border-gray-500 h-0 flex-grow  mt-3"}/>
+                        <div className={"flex-initial text-gray-600 dark:text-gray-400 mx-2"}>
                             Als Nächstes:
                         </div>
-                        <div className={"border-t border-gray-300 h-0 flex-grow mt-3"}/>
+                        <div className={"border-t border-gray-300 dark:border-gray-500 h-0 flex-grow mt-3"}/>
                     </div>
                 }
                 <div>
@@ -111,17 +111,15 @@ export function Timeline({timeline, teams, throws, setTimeline, className, ...pr
     )
 }
 
-function TimelinePlayer({setTimeline, player, throws, timestamp, ...props}) {
-    const color = props.color || "black"
-
+function TimelinePlayer({setTimeline, player, throws, timestamp, color, ...props}) {
     let classes = props.dead ?
-        `bg-white bg-${color}-${props.active ? "50" : "0"} } border-gray-200` :
-        `bg-${color}-100 border-gray-300`
+        `bg-white bg-${color}-${props.active ? "50" : "0"} } dark:bg-gray-800 border-gray-200 dark:border-black` :
+        `bg-${color}-100 border-gray-300 dark:bg-${color}-800 dark:bg-opacity-70 dark:border-black `
 
     return (
         <div
             className={`first:border-t border-b
-            pl-5 pr-2 h-14 text-${color}-600 ` + classes}
+            pl-5 pr-2 h-14 text-${color}-600 dark:text-${color}-400 ` + classes}
             onClick={props.onClick}
         >
             <div className={"flex"}>
@@ -129,13 +127,14 @@ function TimelinePlayer({setTimeline, player, throws, timestamp, ...props}) {
                     {player.name || "..."}
                     {props.actionIcon && <FontAwesomeIcon icon={props.actionIcon} className={"ml-2 mt-1"}/>}
                     {timestamp !== undefined &&
-                    <span className={`font-normal ml-2 text-sm text-${color}-400`}>
+                    <span className={`font-normal ml-2 text-sm text-opacity-70`}>
                         {moment(timestamp).locale("de").fromNow()}
                     </span>
                     }
                 </div>
                 {throws !== undefined &&
-                    <div className={`ml-2 mt-3 font-bold flex-initial h-8 w-8 pt-1 text-center rounded-full bg-${color}-50`}>
+                    <div className={`ml-2 mt-3 font-bold flex-initial h-8 w-8 pt-1 text-center rounded-full 
+                    bg-${color}-50 dark:bg-${color}-900`}>
                         {throws}
                     </div>
                 }
@@ -177,8 +176,8 @@ function UndoButtons(props) {
 function RoundButton({color="gray", ...props}) {
     return (
         <button
-            className={`bg-white border border-${color}-300 hover:border-${color}-700 text-${color}-500 
-            hover:text-${color}-800 h-10 py-auto px-3 rounded-full shadow-sm ` + props.className}
+            className={`bg-white dark:bg-black dark:bg-opacity-30 border border-${color}-300 hover:border-${color}-700  
+            text-${color}-500 dark:text-${color}-300 hover:text-${color}-800 h-10 py-auto px-3 rounded-full shadow-sm ` + props.className}
             onClick={props.onClick}
         >
             {props.children}
@@ -189,7 +188,8 @@ function RoundButton({color="gray", ...props}) {
 function RoundButtonSmall(props) {
     return (
         <button
-            className={`bg-white border border-gray-400 hover:border-gray-700 text-gray-600 hover:text-gray-800 py-1 text-sm px-3 rounded-full shadow-sm ` + props.className}
+            className={`bg-white dark:bg-gray-800 dark:text-gray-400 border border-gray-400 hover:border-gray-700 text-gray-600 
+            hover:text-gray-800 py-1 text-sm px-3 rounded-full shadow-sm ` + props.className}
             onClick={props.onClick}
         >
             {props.children}

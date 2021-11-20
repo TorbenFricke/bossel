@@ -53,7 +53,7 @@ function App() {
     }, [timeline])
 
     return (
-        <div className={"bg-gray-50 min-h-screen"}>
+        <div className={"bg-gray-50 dark:bg-gray-900 min-h-screen"}>
             <Header teams={teams} throws={throws}/>
 
             {navIndex === navOptions.timeline && <Timeline

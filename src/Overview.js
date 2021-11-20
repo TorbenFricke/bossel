@@ -19,7 +19,7 @@ export function Overview({teams, throws, timeline, ...props}) {
 
 function TeamTable({team, timeline, throws, ...props}) {
     return (
-        <div className={"flex border rounded border-gray-100 bg-white shadow-md"}>
+        <div className={"flex border rounded border-gray-100 dark:border-gray-400 bg-white dark:bg-gray-800 shadow-md"}>
             <HeaderColumn team={team} throws={throws}/>
             <TimelineColumn team={team} timeline={timeline}/>
         </div>
@@ -28,10 +28,10 @@ function TeamTable({team, timeline, throws, ...props}) {
 
 function HeaderColumn({team, throws, ...props}) {
     return (
-        <div className={"w-1/3 divide-y divide-gray-300"}>
+        <div className={"w-1/3 divide-y divide-gray-300 dark:divide-gray-500"}>
             {team.players.map(player => {
                 return <div
-                    className={`text-${team.color}-600 pl-2 py-1 font-bold truncate `}
+                    className={`text-${team.color}-600 dark:text-${team.color}-500 pl-2 py-1 font-bold truncate `}
                     key={player.id}
                 >
                     {player.name || "..."} ({throws[player.id]})
@@ -43,7 +43,7 @@ function HeaderColumn({team, throws, ...props}) {
 
 function TimelineColumn({team, timeline, ...props}) {
     return (
-        <div className={"w-2/3 border-l divide-y divide-gray-300 overflow-y-scroll "}>
+        <div className={"w-2/3 border-l dark:border-gray-400 divide-y divide-gray-300 dark:divide-gray-500 overflow-y-scroll "}>
             {team.players.map(player => {
                 return <Row
                     key={player.id}
@@ -71,7 +71,7 @@ function Row({player, timeline, color}) {
         })
 
     return (
-        <div className={`text-${color}-600 font-bold flex flex-row p-2 `}>
+        <div className={`text-${color}-600 dark:text-${color}-500 font-bold flex flex-row p-2 `}>
             {iconList}
         </div>
     )
