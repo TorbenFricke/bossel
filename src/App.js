@@ -66,6 +66,7 @@ function App() {
 
             {navIndex === navOptions.teams && <TeamSetup
                 teams={teams}
+                throws={throws}
                 setTeams={setTeams}
                 reset={reset}
             />}

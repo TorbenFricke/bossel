@@ -1,14 +1,15 @@
-import React, {useState} from "react";
+import React, {useRef, useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashAlt, faPen, faPlus, faBowlingBall, faRedo, faUsers} from "@fortawesome/free-solid-svg-icons";
 import {newPlayer, newTeam, saveToLocalstorage} from "./gameLogic";
 
-export function TeamSetup({teams, setTeams, reset, ...props}) {
+export function TeamSetup({teams, setTeams, reset, throws, ...props}) {
     return (
         <div className={"px-2 py-2 space-y-4"}>
             {teams.map((team, i) => {
                 return <Team
                     team={team}
+                    throws={throws}
                     setTeam={_team => {
                         teams[i] = _team
                         setTeams([...teams])
@@ -92,7 +93,7 @@ function ResetButton({reset, ...props}) {
     )
 }
 
-function Team({team, setTeam, deleteTeam, ...props}) {
+function Team({team, setTeam, deleteTeam, throws, ...props}) {
     return (
         <div>
             <div className={`w-100 rounded-xl bg-white border bg-${team.color}-100 shadow-md p-3`}>
@@ -107,25 +108,34 @@ function Team({team, setTeam, deleteTeam, ...props}) {
                     {team.players.map((player, i) => {
                         return <Player
                             player={player}
+                            throwCount={throws[player.id]}
                             color={team.color}
                             setPlayer={(_player) => {
                                 team.players[i] = _player
                                 setTeam({...team})
                             }}
                             deletePlayer={() => {
-                                if (player.throws > 0) return
+                                if (throws[player.id] > 0) return
                                 team.players.splice(i, 1)
                                 setTeam({...team})
                             }}
                             key={player.id}
+                            inputId={player.id}
                         />
                     })}
                 </div>
                 <div>
                     <GroupButton
                         onClick={() => {
-                            team.players.push(newPlayer(""))
+                            const _player = newPlayer("")
+                            team.players.push(_player)
                             setTeam({...team})
+                            setTimeout(()=> {
+                                try {
+                                    document.getElementById(_player.id).focus()
+                                } catch (e) {}
+
+                            },0)
                         }}
                     >
                         <div className={"text-blue-600"}>
@@ -133,7 +143,7 @@ function Team({team, setTeam, deleteTeam, ...props}) {
                             Neuer Spieler
                         </div>
                     </GroupButton>
-                    {team.throws === 0 &&
+                    {throws[team.id] === 0 &&
                         <GroupButton
                             onClick={() => {
                                 deleteTeam()
@@ -163,12 +173,12 @@ function GroupButton({onClick, className="", ...props}) {
     )
 }
 
-function Player({player, setPlayer, deletePlayer, color, ...props}) {
+function Player({player, setPlayer, deletePlayer, color, throwCount, ...props}) {
     return (
         <div className={"flex"}>
             <button onClick={() => deletePlayer()}>
                 <FontAwesomeIcon
-                    className={player.throws > 0 ? "text-gray-400" : ` text-${color}-600`}
+                    className={throwCount > 0 ? "text-gray-400" : ` text-${color}-600`}
                     icon={faTrashAlt}
                 />
             </button>
@@ -178,6 +188,7 @@ function Player({player, setPlayer, deletePlayer, color, ...props}) {
                 rounded-none border-b-2 border-l-0 border-r-0 border-t-0 bg-transparent
                 mr-2 border-${color}-200 text-${color}-600
                 `}
+                id={props.inputId}
                 type="text"
                 placeholder="Name"
                 value={player.name}

@@ -9,6 +9,8 @@ import {
     generateTimelineEntry,
     saveToLocalstorage,
 } from "./gameLogic"
+import moment from "moment";
+import 'moment/locale/de'
 
 
 export const icons = {}
@@ -69,6 +71,7 @@ export function Timeline({timeline, teams, throws, setTimeline, className, ...pr
                                 active={isActive}
                                 key={index - timeline.length}
                                 dead={true}
+                                timestamp={row.timestamp}
                                 actionIcon={row.action === actions.skip ? icons[actions.skip] : null}
                                 onClick={() => setActiveIdx(index - timeline.length)}
                                 onUndo={() => undoAction(
@@ -108,7 +111,7 @@ export function Timeline({timeline, teams, throws, setTimeline, className, ...pr
     )
 }
 
-function TimelinePlayer({setTimeline, player, throws, ...props}) {
+function TimelinePlayer({setTimeline, player, throws, timestamp, ...props}) {
     const color = props.color || "black"
 
     let classes = props.dead ?
@@ -122,9 +125,14 @@ function TimelinePlayer({setTimeline, player, throws, ...props}) {
             onClick={props.onClick}
         >
             <div className={"flex"}>
-                <div className={`flex-initial my-4 font-bold`}>
+                <div className={`flex-initial truncate my-4 font-bold`}>
                     {player.name || "..."}
                     {props.actionIcon && <FontAwesomeIcon icon={props.actionIcon} className={"ml-2 mt-1"}/>}
+                    {timestamp !== undefined &&
+                    <span className={`font-normal ml-2 text-sm text-${color}-400`}>
+                        {moment(timestamp).locale("de").fromNow()}
+                    </span>
+                    }
                 </div>
                 {throws !== undefined &&
                     <div className={`ml-2 mt-3 font-bold flex-initial h-8 w-8 pt-1 text-center rounded-full bg-${color}-50`}>
@@ -132,9 +140,11 @@ function TimelinePlayer({setTimeline, player, throws, ...props}) {
                     </div>
                 }
                 <div className={"flex-grow"}/>
-                <div>
-                    {props.active && !props.dead && <ThrowButtons onThrow={props.onThrow} onSkip={props.onSkip}/>}
-                    {props.active && props.dead && <UndoButtons onUndo={props.onUndo}/>}
+                <div className={"flex-0"}>
+                    {props.active && !props.dead &&
+                        <ThrowButtons onThrow={props.onThrow} onSkip={props.onSkip} color={color}/>}
+                    {props.active && props.dead &&
+                        <UndoButtons onUndo={props.onUndo}/>}
                 </div>
             </div>
         </div>
@@ -144,11 +154,11 @@ function TimelinePlayer({setTimeline, player, throws, ...props}) {
 function ThrowButtons(props) {
     return (
         <div className={"flex mt-2"}>
-            <RoundButton className={"flex-grow mr-1"} color={"green"} onClick={props.onThrow}>
+            <RoundButton className={"flex-grow mr-1"} onClick={props.onThrow} color={props.color}>
                 <FontAwesomeIcon icon={icons[actions.throw]} className={"mr-2"}/>
                 Werfen
             </RoundButton>
-            <RoundButton className={"flex-grow ml-1"} color={"yellow"} onClick={props.onSkip}>
+            <RoundButton className={"flex-grow ml-1"}  onClick={props.onSkip} color={props.color}>
                 <FontAwesomeIcon icon={icons[actions.skip]} className={""}/>
             </RoundButton>
         </div>
@@ -157,17 +167,18 @@ function ThrowButtons(props) {
 
 function UndoButtons(props) {
     return (
-        <RoundButton className={"mt-2 w-full"} color={"blue"} onClick={props.onUndo}>
+        <RoundButton className={"mt-2 w-full"} onClick={props.onUndo}>
             <FontAwesomeIcon icon={faUndo} className={"mr-2"}/>
             Rückgängig
         </RoundButton>
     )
 }
 
-function RoundButton(props) {
+function RoundButton({color="gray", ...props}) {
     return (
         <button
-            className={`bg-white border border-gray-400 hover:border-gray-700 text-gray-600 hover:text-gray-800 h-10 py-auto px-3 rounded-full shadow ` + props.className}
+            className={`bg-white border border-${color}-300 hover:border-${color}-700 text-${color}-500 
+            hover:text-${color}-800 h-10 py-auto px-3 rounded-full shadow-sm ` + props.className}
             onClick={props.onClick}
         >
             {props.children}
