@@ -6,35 +6,15 @@ export const actions = {
 }
 
 export function initialGameState() {
-    let teams = [
-        {
-            throws: 0,
-            color: "red",
-            id: uid(),
-            players: [
-                newPlayer(""),
-            ]
-        },
-        {
-            throws: 0,
-            color: "blue",
-            id: uid(),
-            players: [
-                newPlayer(""),
-            ]
-        },
-    ]
-    // timeline format
-    // {playerId: "njadhzs", action: actions.throw, teamId: "kijhzg"},
-    return {teams: teams, timeline: []}
+    return {teams: [newTeam("red"), newTeam("blue")], timeline: []}
 }
 
 export function newPlayer(name) {
-    return {name: name, throws: 0, id: uid()}
+    return {name: name, id: uid()}
 }
 
-export function newTeam(name) {
-    return {color: "yellow", throws: 0, id: uid(), players: [newPlayer(name)]}
+export function newTeam(color="yellow") {
+    return {color: color, id: uid(), players: [newPlayer()]}
 }
 
 export function findPlayerById(teams, id) {
@@ -131,4 +111,19 @@ export function saveToLocalstorage({teams, timeline}) {
     if (timeline) {
         localStorage.setItem("timeline", JSON.stringify(timeline))
     }
+}
+
+export function countThrows(timeline) {
+    // default value of 0
+    let throws = new Proxy({}, {
+        get: (target, name) => name in target ? target[name] : 0
+    })
+
+    for (let entry of timeline) {
+        if (entry.action !== actions.throw) continue
+        throws[entry.playerId] += 1
+        throws[entry.teamId] += 1
+    }
+
+    return throws
 }

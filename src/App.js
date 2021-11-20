@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Timeline} from "./Timeline";
 import {Header} from "./Header";
 import {Footer, navOptions} from "./Footer";
-import {initialGameState, saveToLocalstorage} from "./gameLogic";
+import {countThrows, initialGameState, saveToLocalstorage} from "./gameLogic";
 import {TeamSetup} from "./Teams";
 import {Overview} from "./Overview";
 
@@ -11,10 +11,13 @@ const _initialGameState = initialGameState()
 
 function App() {
     const [navIndex, setNavIndex] = useState(navOptions.teams)
-    const [scrollPosition, setScrollPosition] = useState({});
 
+    // persistent (between reloads) game state
     const [teams, setTeams] = useState(_initialGameState.teams)
     const [timeline, setTimeline] = useState(_initialGameState.timeline)
+
+    // ephemeral game state
+    const [throws, setThrows] = useState({})
 
     function reset() {
         const state = initialGameState()
@@ -35,22 +38,6 @@ function App() {
     useEffect(() => {
         localStorage.setItem("navIndex", JSON.stringify(navIndex))
 
-        const handleScroll = () => {
-            let newState = {}
-            newState[navIndex] = window.scrollY
-            setScrollPosition(state => ({...state, ...newState}))
-        }
-
-        window.addEventListener("scroll", handleScroll);
-
-        return () => {
-            window.removeEventListener("scroll", handleScroll);
-        };
-
-    }, [navIndex])
-
-
-    useEffect(() => {
         try {
             navIndex === navOptions.timeline && document.getElementById("defaultScroll").scrollIntoView()
             navIndex === navOptions.teams && window.scrollTo({
@@ -59,34 +46,22 @@ function App() {
             })
         } catch (e) {}
 
-        /*
-        let position = scrollPosition[navIndex]
-
-        try {
-            //console.log(navIndex)
-            //console.log(scrollPosition)
-            //console.log(scrollPosition[navIndex])
-            position === undefined ?
-                document.getElementById("defaultScroll").scrollIntoView() :
-                window.scrollTo({
-                    top: position,
-                    behavior: 'auto'
-                })
-        } catch (e) {}
-        */
-
     }, [navIndex])
+
+    useEffect(() => {
+        setThrows(countThrows(timeline))
+    }, [timeline])
 
     return (
         <div className={"bg-gray-50 min-h-screen"}>
-            <Header teams={teams}/>
+            <Header teams={teams} throws={throws}/>
 
             {navIndex === navOptions.timeline && <Timeline
                 //className={navIndex === navOptions.timeline ? "" : "hidden"}
                 teams={teams}
+                throws={throws}
                 timeline={timeline}
                 setTimeline={setTimeline}
-                setTeams={setTeams}
             />}
 
             {navIndex === navOptions.teams && <TeamSetup
@@ -98,6 +73,7 @@ function App() {
             {navIndex === navOptions.overview && <Overview
                 teams={teams}
                 timeline={timeline}
+                throws={throws}
             />}
 
             <Footer navIndex={navIndex} setNavIndex={setNavIndex}/>

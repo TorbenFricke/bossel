@@ -1,15 +1,14 @@
 import React from "react";
 
-export function Header(props) {
+export function Header({teams, throws}) {
     return (
         <div className={"sticky bg-white top-0 h-16 w-full flex px-7 py-2 shadow-md"}>
-            {props.children}
             <div className={"font-bold text-gray-600 my-auto"}>Würfe:</div>
             <div className={"flex-grow"}/>
             {
-                props.teams.map(team => {
+                teams.map(team => {
                     return <ThrowsHeaderStat color={team.color} key={team.id}>
-                        {team.throws}
+                        {throws[team.id]}
                     </ThrowsHeaderStat>
                 })
             }

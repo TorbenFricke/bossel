@@ -4,7 +4,6 @@ import {faBowlingBall, faPause, faUndo} from "@fortawesome/free-solid-svg-icons"
 import {
     actions,
     findPlayerById,
-    findTeamById,
     findTeamByPlayerId,
     findThrowOrder,
     generateTimelineEntry,
@@ -16,7 +15,7 @@ export const icons = {}
 icons[actions.throw] = faBowlingBall
 icons[actions.skip] = faPause
 
-export function Timeline({timeline, teams, setTimeline, setTeams, className, ...props}) {
+export function Timeline({timeline, teams, throws, setTimeline, className, ...props}) {
     const [activeIdx, setActiveIdx] = useState(0);
     const [throwOrder, setThrowOrder] = useState(findThrowOrder(teams, timeline));
     const [historyLength, setHistoryLength] = useState(10)
@@ -27,30 +26,15 @@ export function Timeline({timeline, teams, setTimeline, setTeams, className, ...
 
 
     function performAction(playerId, action) {
-        const team = findTeamByPlayerId(teams, playerId)
-        const timelineEntry = generateTimelineEntry(teams, playerId, action, team.id)
-        if (action === actions.throw) {
-            team.throws += 1
-            const player = findPlayerById(teams, playerId)
-            player.throws += 1
-            setTeams([...teams])
-        }
-        setTimeline([...timeline, timelineEntry])
-        saveToLocalstorage({teams: teams, timeline: [...timeline, timelineEntry]})
+        const timelineEntry = generateTimelineEntry(teams, playerId, action)
+        setTimeline(state => [...state, timelineEntry])
+        saveToLocalstorage({timeline: [...timeline, timelineEntry]})
     }
 
     function undoAction(index) {
-        const timelineEntry = timeline.splice(index, 1)[0]
-        if (timelineEntry.action === actions.throw) {
-            const team = findTeamById(teams, timelineEntry.teamId)
-            team.throws -= 1
-            const player = findPlayerById(teams, timelineEntry.playerId)
-            player.throws -= 1
-            console.log(teams)
-            setTeams([...teams])
-        }
+        timeline.splice(index, 1)
         setTimeline(timeline)
-        saveToLocalstorage({teams: teams, timeline: [...timeline, timelineEntry]})
+        saveToLocalstorage({timeline: timeline})
     }
 
     return (
@@ -107,6 +91,7 @@ export function Timeline({timeline, teams, setTimeline, setTeams, className, ...
                     {
                         throwOrder.map((player, index) => {
                             return <TimelinePlayer
+                                throws={throws[player.id]}
                                 player={player}
                                 active={index === activeIdx}
                                 key={index}
@@ -123,7 +108,7 @@ export function Timeline({timeline, teams, setTimeline, setTeams, className, ...
     )
 }
 
-function TimelinePlayer({setTimeline, player, ...props}) {
+function TimelinePlayer({setTimeline, player, throws, ...props}) {
     const color = props.color || "black"
 
     let classes = props.dead ?
@@ -141,9 +126,9 @@ function TimelinePlayer({setTimeline, player, ...props}) {
                     {player.name || "..."}
                     {props.actionIcon && <FontAwesomeIcon icon={props.actionIcon} className={"ml-2 mt-1"}/>}
                 </div>
-                {props.dead ||
+                {throws !== undefined &&
                     <div className={`ml-2 mt-3 font-bold flex-initial h-8 w-8 pt-1 text-center rounded-full bg-${color}-50`}>
-                        {player.throws || "0"}
+                        {throws}
                     </div>
                 }
                 <div className={"flex-grow"}/>

@@ -24,7 +24,7 @@ export function TeamSetup({teams, setTeams, reset, ...props}) {
             })}
             <button
                 className={"w-full rounded-xl bg-white shadow-md py-3 text-blue-600 text-center hover:bg-blue-100"}
-                onClick={() => setTeams([...teams, newTeam("")])}
+                onClick={() => setTeams([...teams, newTeam()])}
             >
                 <FontAwesomeIcon className={"mr-2"} icon={faUsers}/>
                 Neues Team
