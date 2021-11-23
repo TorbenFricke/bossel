@@ -5,10 +5,26 @@
     {
       "src": "favicon.ico",
       "type": "image/x-icon"
+    }, {
+      "src": "Logo64.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    }, {
+      "src": "Logo128.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    }, {
+      "src": "Logo256.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    }, {
+      "src": "Logo512.png",
+      "sizes": "512x512",
+      "type": "image/png"
     }
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#ffffff",
-  "background_color": "#ffffff"
+  "theme_color": "transparent",
+  "background_color": "transparent"
 }

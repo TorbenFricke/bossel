@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashAlt, faPen, faPlus, faBowlingBall, faRedo, faUsers} from "@fortawesome/free-solid-svg-icons";
 import {newPlayer, newTeam, saveToLocalstorage} from "./gameLogic";
@@ -25,7 +25,7 @@ export function TeamSetup({teams, setTeams, reset, throws, ...props}) {
             })}
             <button
                 className={"w-full rounded-xl shadow-md py-3 text-center border bg-white text-blue-600 " +
-                "hover:bg-blue-100 dark:bg-gray-800 dark:border-gray-600 dark:text-blue-400"}
+                "dark:bg-gray-800 dark:border-gray-600 dark:text-blue-400"}
                 onClick={() => setTeams([...teams, newTeam()])}
             >
                 <FontAwesomeIcon className={"mr-2"} icon={faUsers}/>
@@ -61,7 +61,7 @@ function ResetButton({reset, ...props}) {
         <div>
             <button
                 className={"w-full rounded-xl bg-white dark:b shadow-md py-3 text-red-600 text-center " +
-                "hover:bg-red-200 dark:bg-gray-800 dark:border-gray-600 dark:text-red-400 border"}
+                "dark:bg-gray-800 dark:border-gray-600 dark:text-red-400 border"}
                 onClick={() => setShowModal(true)}
             >
                 <FontAwesomeIcon className={"mr-2"} icon={faRedo}/>
@@ -73,14 +73,14 @@ function ResetButton({reset, ...props}) {
                     Es werden alle Würfe und Spieler gelöscht. Sicher?
                 </div>
                 <button
-                    className={"w-full mt-4 rounded-xl bg-white shadow-md py-3 text-blue-600 text-center hover:bg-blue-200 bg-gray-100"}
+                    className={"w-full mt-4 rounded-xl bg-white shadow-md py-3 text-blue-600 text-center bg-gray-100"}
                     onClick={() => setShowModal(false)}
                 >
                     <FontAwesomeIcon className={"mr-2"} icon={faBowlingBall}/>
                     Weiterspielen
                 </button>
                 <button
-                    className={"w-full mt-4 rounded-xl bg-white shadow-md py-3 text-red-600 text-center hover:bg-red-200 bg-red-100"}
+                    className={"w-full mt-4 rounded-xl bg-white shadow-md py-3 text-red-600 text-center bg-red-100"}
                     onClick={() =>{
                         setShowModal(false)
                         reset()
@@ -98,7 +98,7 @@ function ResetButton({reset, ...props}) {
 function Team({team, setTeam, deleteTeam, throws, ...props}) {
     return (
         <div>
-            <div className={`w-100 rounded-xl bg-${team.color}-100 dark:bg-${team.color}-800 shadow-md p-3`}>
+            <div className={`w-100 rounded-xl bg-${team.color}-100 dark:bg-${team.color}-900 dark:bg-opacity-70 shadow-md p-3`}>
                 <ColorSelector
                     className={"float-right mb-2"}
                     color={team.color}

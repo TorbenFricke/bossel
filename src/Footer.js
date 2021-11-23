@@ -12,9 +12,9 @@ export const navOptions = {
 
 export function Footer({navIndex, setNavIndex, ...props}) {
     return (
-        <div className={"h-16"}>
+        <div className={"h-20"}>
             <div
-                className={"fixed bg-white dark:bg-black bottom-0 w-full border-t border-gray-200 dark:border-gray-600 flex py-2 px-2 space-x-2 justify-center drop-shadow"}>
+                className={"fixed bg-white dark:bg-black bottom-0 w-full border-t border-gray-200 dark:border-gray-600 flex px-2 space-x-0 justify-center drop-shadow"}>
                 <FooterNavButton
                     icon={faBowlingBall}
                     active={navIndex === navOptions.timeline}
@@ -40,10 +40,10 @@ export function Footer({navIndex, setNavIndex, ...props}) {
 
 function FooterNavButton({active, color, ...props}) {
     const activeClass = `text-blue-600 dark:text-white`
-    const inactiveClass = `hover:text-black dark:text-gray-500 text-gray-500`
+    const inactiveClass = `dark:text-gray-500 text-gray-500`
     return (
         <button
-            className={`text-center h-12 px-4 py-auto rounded-xl flex-1 transition ${active ? activeClass : inactiveClass} ` + props.className}
+            className={`text-center h-20 mb-1 pb-7 px-4 pt-2 rounded-xl flex-1 ${active ? activeClass : inactiveClass} ` + props.className}
             onClick={props.onClick}
         >
             <div>

@@ -26,56 +26,62 @@ export function Timeline({timeline, teams, throws, setTimeline, className, ...pr
         setThrowOrder(findThrowOrder(teams, timeline))
     }, [teams, timeline]);
 
+    function saveAndReturnTimeline(newTimeline) {
+        saveToLocalstorage({timeline: newTimeline})
+        return newTimeline
+    }
 
     function performAction(playerId, action) {
         const timelineEntry = generateTimelineEntry(teams, playerId, action)
-        setTimeline(state => [...state, timelineEntry])
-        saveToLocalstorage({timeline: [...timeline, timelineEntry]})
+        setTimeline(state =>
+            saveAndReturnTimeline([...state, timelineEntry])
+        )
     }
 
-    function undoAction(index) {
-        timeline.splice(index, 1)
-        setTimeline(timeline)
-        saveToLocalstorage({timeline: timeline})
+    function undoAction(timestamp) {
+        setTimeline(state =>
+            saveAndReturnTimeline(state.filter(entry => entry.timestamp !== timestamp))
+        )
     }
+
+    const navDown = (
+            <a href={"#defaultScroll"} className={"underline ml-2 text-gray-500 text-sm"}>
+                Nach unten...
+            </a>
+        )
 
     return (
         <div className={className}>
             <div className={"max-w-md mx-auto"}>
                 <div className={"text-center mb-2"}>
                     {historyLength < timeline.length ?
-                        <div className={"mt-3"}>
+                        <div className={"mt-4"}>
                             <RoundButtonSmall onClick={() => setHistoryLength(historyLength + 10)}>
                                 Weitere Anzeigen...
                             </RoundButtonSmall>
                             <div className={"text-gray-500 ml-2 mt-1 text-sm"}>
                                 {timeline.length - historyLength} ausgebledet
-                                <a href={"#defaultScroll"} className={"underline ml-2"}>
-                                    Nach unten...
-                                </a>
+                                {navDown}
                             </div>
                         </div>
                         :
-                        <a href={"#defaultScroll"} className={"underline text-gray-600 text-sm ml-2"}>
-                            Nach unten...
-                        </a>
+                        navDown
                     }
                 </div>
                 <div>
                     {
                         timeline.slice(-historyLength).map((row, index) => {
                             const player = findPlayerById(teams, row.playerId)
-                            const isActive = index === timeline.length + activeIdx
+                            //const isActive = index === timeline.length + activeIdx
                             return <TimelinePlayer
                                 player={player}
-                                active={isActive}
-                                key={index - timeline.length}
+                                //active={isActive}
+                                key={row.timestamp}
                                 dead={true}
                                 timestamp={row.timestamp}
-                                actionIcon={row.action === actions.skip ? icons[actions.skip] : null}
+                                action={row.action}
                                 onClick={() => setActiveIdx(index - timeline.length)}
-                                onUndo={() => undoAction(
-                                    index + Math.max(0, timeline.length - historyLength))}
+                                onUndo={() => undoAction(row.timestamp)}
                                 color={findTeamByPlayerId(teams, player.id).color}
                             />
                         })
@@ -97,7 +103,7 @@ export function Timeline({timeline, teams, throws, setTimeline, className, ...pr
                                 throws={throws[player.id]}
                                 player={player}
                                 active={index === activeIdx}
-                                key={index}
+                                key={player.id + "_" + (index + timeline.length)}
                                 onClick={() => setActiveIdx(index)}
                                 onThrow={() => performAction(player.id, actions.throw)}
                                 onSkip={() => performAction(player.id, actions.skip)}
@@ -111,21 +117,51 @@ export function Timeline({timeline, teams, throws, setTimeline, className, ...pr
     )
 }
 
-function TimelinePlayer({setTimeline, player, throws, timestamp, color, ...props}) {
-    let classes = props.dead ?
-        `bg-white bg-${color}-${props.active ? "50" : "0"} } dark:bg-gray-800 border-gray-200 dark:border-black` :
-        `bg-${color}-100 border-gray-300 dark:bg-${color}-800 dark:bg-opacity-70 dark:border-black `
+function TimelinePlayer({setTimeline, player, throws, timestamp, color, action, ...props}) {
+    const [dead, setDead] = useState(action !== undefined)
+    const [timeoutRef, setTimeoutRef] = useState()
+
+    let classes = dead ?
+        `bg-white dark:bg-gray-800 border-gray-200 dark:border-black ` : // bg-${color}-${props.active ? "50" : "0"}
+        `bg-${color}-100 border-gray-300 dark:bg-${color}-900 dark:bg-opacity-70 dark:border-black `
+
+    function click(handler=props.onThrow) {
+        setDead(!dead)
+        if (timeoutRef !== undefined) {
+            clearTimeout(timeoutRef)
+            setTimeoutRef()
+        } else {
+            let timeout = setTimeout(() => {
+                setDead(!dead)
+                dead ? props.onUndo() : handler()
+            }, 1000)
+            setTimeoutRef(timeout)
+        }
+    }
 
     return (
         <div
-            className={`first:border-t border-b
-            pl-5 pr-2 h-14 text-${color}-600 dark:text-${color}-400 ` + classes}
+            className={`first:border-t border-b transition duration-700 
+            pl-3 pr-2 h-14 text-${color}-600 dark:text-${color}-400 ` + classes}
             onClick={props.onClick}
         >
             <div className={"flex"}>
+                <div
+                    className={
+                        `w-9 h-9 rounded-full mt-2.5 mr-3 text-center border-2 
+                        ${dead ? "text-opacity-50 border-opacity-50" : ""} border-${color}-400
+                        bg-gray-700 dark:bg-black bg-opacity-5 dark:bg-opacity-30 
+                        text-${color}-500 dark:text-${color}-300 dark:border-${color}-300`
+                    }
+                    onClick={() => click(props.onThrow)}
+                >
+                    {dead &&
+                        <FontAwesomeIcon icon={faUndo} className={"mt-2"}/>
+                    }
+                </div>
                 <div className={`flex-initial truncate my-4 font-bold`}>
+                    {action === actions.skip && <FontAwesomeIcon icon={icons[action]} className={"mr-2 mt-1"}/>}
                     {player.name || "..."}
-                    {props.actionIcon && <FontAwesomeIcon icon={props.actionIcon} className={"ml-2 mt-1"}/>}
                     {timestamp !== undefined &&
                     <span className={`font-normal ml-2 text-sm text-opacity-70`}>
                         {moment(timestamp).locale("de").fromNow()}
@@ -134,31 +170,30 @@ function TimelinePlayer({setTimeline, player, throws, timestamp, color, ...props
                 </div>
                 {throws !== undefined &&
                     <div className={`ml-2 mt-3 font-bold flex-initial h-8 w-8 pt-1 text-center rounded-full 
-                    bg-${color}-50 dark:bg-${color}-900`}>
+                    bg-${color}-50 dark:bg-${color}-900 ${dead ? " transition-opacity opacity-0" : ""}`}>
                         {throws}
                     </div>
                 }
                 <div className={"flex-grow"}/>
                 <div className={"flex-0"}>
-                    {props.active && !props.dead &&
-                        <ThrowButtons onThrow={props.onThrow} onSkip={props.onSkip} color={color}/>}
-                    {props.active && props.dead &&
-                        <UndoButtons onUndo={props.onUndo}/>}
+                    {props.active && action === undefined && <ThrowButtons
+                        onThrow={() => click(props.onThrow)}
+                        onSkip={() => click(props.onSkip)}
+                        color={color}
+                        className={dead ? "transition-opacity opacity-0" : ""}
+                    />}
                 </div>
             </div>
         </div>
     )
 }
 
-function ThrowButtons(props) {
+function ThrowButtons({className, ...props}) {
     return (
         <div className={"flex mt-2"}>
-            <RoundButton className={"flex-grow mr-1"} onClick={props.onThrow} color={props.color}>
-                <FontAwesomeIcon icon={icons[actions.throw]} className={"mr-2"}/>
-                Werfen
-            </RoundButton>
-            <RoundButton className={"flex-grow ml-1"}  onClick={props.onSkip} color={props.color}>
-                <FontAwesomeIcon icon={icons[actions.skip]} className={""}/>
+            <RoundButton className={"flex-grow ml-1 " + className}  onClick={props.onSkip} color={props.color}>
+                <FontAwesomeIcon icon={icons[actions.skip]} className={"mr-2"}/>
+                Aussetzen
             </RoundButton>
         </div>
     )
@@ -176,8 +211,8 @@ function UndoButtons(props) {
 function RoundButton({color="gray", ...props}) {
     return (
         <button
-            className={`bg-white dark:bg-black dark:bg-opacity-30 border border-${color}-300 hover:border-${color}-700  
-            text-${color}-500 dark:text-${color}-300 hover:text-${color}-800 h-10 py-auto px-3 rounded-full shadow-sm ` + props.className}
+            className={`bg-white dark:bg-black dark:bg-opacity-30 border border-${color}-500 dark:border-${color}-300 
+            text-${color}-500 dark:text-${color}-300 h-10 py-auto px-3 rounded-full shadow-sm ` + props.className}
             onClick={props.onClick}
         >
             {props.children}
@@ -188,8 +223,8 @@ function RoundButton({color="gray", ...props}) {
 function RoundButtonSmall(props) {
     return (
         <button
-            className={`bg-white dark:bg-gray-800 dark:text-gray-400 border border-gray-400 hover:border-gray-700 text-gray-600 
-            hover:text-gray-800 py-1 text-sm px-3 rounded-full shadow-sm ` + props.className}
+            className={`bg-white dark:bg-gray-800 dark:text-gray-400 border border-gray-400 text-gray-600 
+            py-1 text-sm px-3 rounded-full shadow-sm ` + props.className}
             onClick={props.onClick}
         >
             {props.children}
