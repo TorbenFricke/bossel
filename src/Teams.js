@@ -119,6 +119,10 @@ function Team({team, setTeam, deleteTeam, throws, ...props}) {
                             deletePlayer={() => {
                                 if (throws[player.id] > 0) return
                                 team.players.splice(i, 1)
+                                if (team.players.length === 0) {
+                                    deleteTeam()
+                                    return
+                                }
                                 setTeam({...team})
                             }}
                             key={player.id}
@@ -144,19 +148,6 @@ function Team({team, setTeam, deleteTeam, throws, ...props}) {
                         <FontAwesomeIcon className={"mr-2"} icon={faPlus}/>
                         Neuer Spieler
                     </GroupButton>
-                    {throws[team.id] === 0 &&
-                        <GroupButton
-                            color={"red"}
-                            onClick={() => {
-                                deleteTeam()
-                            }}
-                        >
-                            <div className={"text-red-400"}>
-                                <FontAwesomeIcon className={"mr-2"} icon={faTrashAlt}/>
-                                Team Löschen
-                            </div>
-                        </GroupButton>
-                    }
                 </div>
             </div>
         </div>
@@ -184,7 +175,7 @@ function Player({player, setPlayer, deletePlayer, color, throwCount, ...props}) 
             <button onClick={() => deletePlayer()}>
                 <FontAwesomeIcon
                     className={throwCount > 0 ?
-                        `text-gray-400 dark:text-${color}-700` :
+                        `text-gray-400 dark:text-${color}-900` :
                         `text-${color}-600 dark:text-white`}
                     icon={faTrashAlt}
                 />

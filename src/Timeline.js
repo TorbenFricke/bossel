@@ -52,7 +52,7 @@ export function Timeline({timeline, teams, throws, setTimeline, className, ...pr
 
     return (
         <div className={className}>
-            <div className={"max-w-md mx-auto"}>
+            <div className={"mx-auto"}>
                 <div className={"text-center mb-2"}>
                     {historyLength < timeline.length ?
                         <div className={"mt-4"}>
