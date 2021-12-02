@@ -12,7 +12,7 @@ export const navOptions = {
 
 export function Footer({navIndex, setNavIndex, ...props}) {
     return (
-        <div className={"h-20"}>
+        <div className={"h-20 mb-1"}>
             <div
                 className={"fixed bg-white dark:bg-black bottom-0 w-full border-t border-gray-200 dark:border-gray-600 flex px-2 space-x-0 justify-center drop-shadow"}>
                 <FooterNavButton
@@ -44,6 +44,7 @@ function FooterNavButton({active, color, ...props}) {
     return (
         <button
             className={`text-center h-20 mb-1 pb-7 px-4 pt-2 rounded-xl flex-1 ${active ? activeClass : inactiveClass} ` + props.className}
+            onTouchStart={props.onClick}
             onClick={props.onClick}
         >
             <div>

@@ -3,7 +3,7 @@ import React from "react";
 export function Header({teams, throws}) {
     return (
         <div>
-            <div className={"fixed bg-white h-10 dark:bg-black border-b dark:border-gray-600 top-0 h-12 w-full px-7 pb-2 flex shadow-md"}>
+            <div className={"fixed bg-white dark:bg-black border-b dark:border-gray-600 top-0 h-12 w-full px-7 pb-2 flex shadow-md z-20"}>
                 <div className={"font-bold text-gray-600 dark:text-gray-200 my-auto"}>
                     Würfe:
                 </div>

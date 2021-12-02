@@ -52,7 +52,7 @@ export function Timeline({timeline, teams, throws, setTimeline, className, ...pr
 
     return (
         <div className={className}>
-            <div className={"mx-auto"}>
+            <div className={"mx-auto pt-2"}>
                 <div className={"text-center mb-2"}>
                     {historyLength < timeline.length ?
                         <div className={"mt-4"}>
@@ -121,10 +121,6 @@ function TimelinePlayer({setTimeline, player, throws, timestamp, color, action, 
     const [dead, setDead] = useState(action !== undefined)
     const [timeoutRef, setTimeoutRef] = useState()
 
-    let classes = dead ?
-        `bg-white dark:bg-gray-800 border-gray-200 dark:border-black ` : // bg-${color}-${props.active ? "50" : "0"}
-        `bg-${color}-100 border-gray-300 dark:bg-${color}-900 dark:bg-opacity-70 dark:border-black `
-
     function click(handler=props.onThrow) {
         setDead(!dead)
         if (timeoutRef !== undefined) {
@@ -141,15 +137,24 @@ function TimelinePlayer({setTimeline, player, throws, timestamp, color, action, 
 
     return (
         <div
-            className={`first:border-t border-b transition duration-700 
-            pl-3 pr-2 h-14 text-${color}-600 dark:text-${color}-400 ` + classes}
+            className={`first:border-t border-b duration-1000
+            h-14 text-${color}-600 dark:text-${color}-400 
+            bg-white dark:bg-gray-800 border-gray-200 dark:border-black`}
             onClick={props.onClick}
         >
-            <div className={"flex"}>
+
+            <div className={`absolute h-14
+            bg-${color}-100 border-gray-300 dark:bg-${color}-900 dark:bg-opacity-70
+            dark:bg-gray-800 border-gray-200 dark:border-black
+            first:border-t border-b 
+            ${dead ? "w-0" : "w-full"} transition-width duration-1000`}/>
+
+            <div className={"relative flex ml-3 mr-2 z-0"}>
                 <div
                     className={
                         `w-9 h-9 rounded-full mt-2.5 mr-3 text-center border-2 
-                        ${dead ? "text-opacity-50 border-opacity-50" : ""} border-${color}-400
+                        ${dead ? "text-opacity-50 border-opacity-50" : ""} transition duration-1000 
+                        border-${color}-400
                         bg-gray-700 dark:bg-black bg-opacity-5 dark:bg-opacity-30 
                         text-${color}-500 dark:text-${color}-300 dark:border-${color}-300`
                     }
@@ -170,7 +175,7 @@ function TimelinePlayer({setTimeline, player, throws, timestamp, color, action, 
                 </div>
                 {throws !== undefined &&
                     <div className={`ml-2 mt-3 font-bold flex-initial h-8 w-8 pt-1 text-center rounded-full 
-                    bg-${color}-50 dark:bg-${color}-900 ${dead ? " transition-opacity opacity-0" : ""}`}>
+                    bg-${color}-50 dark:bg-${color}-900 ${dead ? " opacity-0" : ""} transition-opacity`}>
                         {throws}
                     </div>
                 }
@@ -184,6 +189,7 @@ function TimelinePlayer({setTimeline, player, throws, timestamp, color, action, 
                     />}
                 </div>
             </div>
+
         </div>
     )
 }
