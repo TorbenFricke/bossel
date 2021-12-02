@@ -21,6 +21,7 @@ export function Timeline({timeline, teams, throws, setTimeline, className, ...pr
     const [activeIdx, setActiveIdx] = useState(0);
     const [throwOrder, setThrowOrder] = useState(findThrowOrder(teams, timeline));
     const [historyLength, setHistoryLength] = useState(10)
+    const [undoCount, setUndoCount] = useState(0)
 
     useEffect(() => {
         setThrowOrder(findThrowOrder(teams, timeline))
@@ -39,6 +40,7 @@ export function Timeline({timeline, teams, throws, setTimeline, className, ...pr
     }
 
     function undoAction(timestamp) {
+        setUndoCount(undoCount + 1)
         setTimeline(state =>
             saveAndReturnTimeline(state.filter(entry => entry.timestamp !== timestamp))
         )
@@ -103,7 +105,7 @@ export function Timeline({timeline, teams, throws, setTimeline, className, ...pr
                                 throws={throws[player.id]}
                                 player={player}
                                 active={index === activeIdx}
-                                key={player.id + "_" + (index + timeline.length)}
+                                key={player.id + "_" + undoCount + "_" + throws[player.id]}
                                 onClick={() => setActiveIdx(index)}
                                 onThrow={() => performAction(player.id, actions.throw)}
                                 onSkip={() => performAction(player.id, actions.skip)}
@@ -128,7 +130,6 @@ function TimelinePlayer({setTimeline, player, throws, timestamp, color, action, 
             setTimeoutRef()
         } else {
             let timeout = setTimeout(() => {
-                setDead(!dead)
                 dead ? props.onUndo() : handler()
             }, 1000)
             setTimeoutRef(timeout)
