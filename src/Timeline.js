@@ -17,7 +17,7 @@ export const icons = {}
 icons[actions.throw] = faBowlingBall
 icons[actions.skip] = faPause
 
-export function Timeline({timeline, teams, throws, setTimeline, className, ...props}) {
+export function Timeline({timeline, teams, throws, actionCount, setTimeline, className, ...props}) {
     const [activeIdx, setActiveIdx] = useState(0);
     const [throwOrder, setThrowOrder] = useState(findThrowOrder(teams, timeline));
     const [historyLength, setHistoryLength] = useState(10)
@@ -105,7 +105,7 @@ export function Timeline({timeline, teams, throws, setTimeline, className, ...pr
                                 throws={throws[player.id]}
                                 player={player}
                                 active={index === activeIdx}
-                                key={player.id + "_" + undoCount + "_" + throws[player.id]}
+                                key={player.id + "_" + undoCount + "_" + actionCount[player.id] + "_" + throws[player.id]}
                                 onClick={() => setActiveIdx(index)}
                                 onThrow={() => performAction(player.id, actions.throw)}
                                 onSkip={() => performAction(player.id, actions.skip)}

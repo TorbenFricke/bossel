@@ -3,13 +3,13 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashAlt, faPen, faPlus, faBowlingBall, faRedo, faUsers} from "@fortawesome/free-solid-svg-icons";
 import {newPlayer, newTeam, saveToLocalstorage} from "./gameLogic";
 
-export function TeamSetup({teams, setTeams, reset, throws, ...props}) {
+export function TeamSetup({teams, setTeams, reset, actionCount, ...props}) {
     return (
         <div className={"px-2 py-2 space-y-4"}>
             {teams.map((team, i) => {
                 return <Team
                     team={team}
-                    throws={throws}
+                    actionCount={actionCount}
                     setTeam={_team => {
                         teams[i] = _team
                         setTeams([...teams])
@@ -95,7 +95,7 @@ function ResetButton({reset, ...props}) {
     )
 }
 
-function Team({team, setTeam, deleteTeam, throws, ...props}) {
+function Team({team, setTeam, deleteTeam, actionCount, ...props}) {
     return (
         <div>
             <div className={`w-100 rounded-xl bg-${team.color}-100 dark:bg-${team.color}-900 dark:bg-opacity-70 shadow-md p-3`}>
@@ -110,14 +110,14 @@ function Team({team, setTeam, deleteTeam, throws, ...props}) {
                     {team.players.map((player, i) => {
                         return <Player
                             player={player}
-                            throwCount={throws[player.id]}
+                            throwCount={actionCount[player.id]}
                             color={team.color}
                             setPlayer={(_player) => {
                                 team.players[i] = _player
                                 setTeam({...team})
                             }}
                             deletePlayer={() => {
-                                if (throws[player.id] > 0) return
+                                if (actionCount[player.id] > 0) return
                                 team.players.splice(i, 1)
                                 if (team.players.length === 0) {
                                     deleteTeam()

@@ -5,3 +5,10 @@ export function uid() {
     // after the decimal.
     return '_' + Math.random().toString(36).substr(2, 9);
 }
+
+
+export function setFromLocalStorage(key, setter) {
+    let fromStorage = localStorage.getItem(key)
+    if (fromStorage == null) return
+    setter(JSON.parse(fromStorage))
+}

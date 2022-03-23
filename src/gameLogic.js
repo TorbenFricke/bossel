@@ -47,7 +47,8 @@ export function findThrowOrder(teams, timeline) {
         for (let entry of timeline.slice().reverse()) {
             if (entry.teamId === teamId) return entry.playerId
         }
-        return findTeamById(teams, teamId).players[0].id
+        let players = findTeamById(teams, teamId).players
+        return players[players.length - 1].id
     }
 
     let byTeam = {}
@@ -113,17 +114,39 @@ export function saveToLocalstorage({teams, timeline}) {
     }
 }
 
-export function countThrows(timeline) {
+function count(timeline, action) {
     // default value of 0
     let throws = new Proxy({}, {
         get: (target, name) => name in target ? target[name] : 0
     })
 
     for (let entry of timeline) {
-        if (entry.action !== actions.throw) continue
+        if (entry.action !== action) continue
         throws[entry.playerId] += 1
         throws[entry.teamId] += 1
     }
 
     return throws
+}
+
+export function countThrows(timeline) {
+    return count(timeline, actions.throw)
+}
+
+export function countSkips(timeline) {
+    return count(timeline, actions.skip)
+}
+
+export function countActions(timeline) {
+    // default value of 0
+    let count = new Proxy({}, {
+        get: (target, name) => name in target ? target[name] : 0
+    })
+
+    for (let entry of timeline) {
+        count[entry.playerId] += 1
+        count[entry.teamId] += 1
+    }
+
+    return count
 }

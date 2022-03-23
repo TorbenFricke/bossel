@@ -31,7 +31,7 @@ function HeaderColumn({team, throws, ...props}) {
         <div className={"w-1/3 divide-y divide-gray-300 dark:divide-gray-500"}>
             {team.players.map(player => {
                 return <div
-                    className={`text-${team.color}-600 dark:text-${team.color}-500 pl-2 py-1 font-bold truncate `}
+                    className={`text-${team.color}-600 dark:text-${team.color}-500 pl-2 pt-1 h-8 font-bold truncate `}
                     key={player.id}
                 >
                     {player.name || "..."} ({throws[player.id]})
@@ -65,13 +65,13 @@ function Row({player, timeline, color}) {
         .map((entry, i) => {
             return <FontAwesomeIcon
                 icon={icons[entry.action]}
-                className={"mr-1"}
+                className={"mr-1 fa-w-16"} // we have to use fa-w-16 instead of w-16 to set the width successfully
                 key={i}
             />
         })
 
     return (
-        <div className={`text-${color}-600 dark:text-${color}-500 font-bold flex flex-row p-2 `}>
+        <div className={`text-${color}-600 dark:text-${color}-500 font-bold flex flex-row pt-2 px-2 h-8`}>
             {iconList}
         </div>
     )

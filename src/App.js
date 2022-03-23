@@ -2,22 +2,23 @@ import React, {useEffect, useState} from 'react';
 import {Timeline} from "./Timeline";
 import {Header} from "./Header";
 import {Footer, navOptions} from "./Footer";
-import {countThrows, initialGameState, saveToLocalstorage} from "./gameLogic";
+import {countActions, countThrows, initialGameState, saveToLocalstorage} from "./gameLogic";
 import {TeamSetup} from "./Teams";
 import {Overview} from "./Overview";
+import {setFromLocalStorage} from "./util";
 
 
 const _initialGameState = initialGameState()
 
 function App() {
-    const [navIndex, setNavIndex] = useState(navOptions.teams)
-
     // persistent (between reloads) game state
     const [teams, setTeams] = useState(_initialGameState.teams)
     const [timeline, setTimeline] = useState(_initialGameState.timeline)
+    const [navIndex, setNavIndex] = useState(navOptions.teams)
 
     // ephemeral game state
     const [throws, setThrows] = useState({})
+    const [actionCount, setActionCount] = useState({})
 
     function reset() {
         const state = initialGameState()
@@ -26,15 +27,18 @@ function App() {
         saveToLocalstorage(state)
     }
 
+    // on first load
     useEffect(() => {
-        const timeline = JSON.parse(localStorage.getItem("timeline"))
-        const teams = JSON.parse(localStorage.getItem("teams"))
-        const nav = JSON.parse(localStorage.getItem("navIndex"))
-        if (timeline) { setTimeline(timeline) }
-        if (teams) { setTeams(teams) }
-        if (nav !== undefined) { setNavIndex(nav) }
+        setFromLocalStorage("timeline", setTimeline)
+        setFromLocalStorage("teams", setTeams)
+        setFromLocalStorage("navIndex", setNavIndex)
+        // write initial team data on the very first load
+        if (localStorage.getItem("teams") == null) {
+            saveToLocalstorage({teams: _initialGameState.teams})
+        }
     }, [])
 
+    // when changing the tab
     useEffect(() => {
         localStorage.setItem("navIndex", JSON.stringify(navIndex))
 
@@ -48,8 +52,10 @@ function App() {
 
     }, [navIndex])
 
+    // on every player action
     useEffect(() => {
         setThrows(countThrows(timeline))
+        setActionCount(countActions(timeline))
     }, [timeline])
 
     return (
@@ -60,13 +66,14 @@ function App() {
                 //className={navIndex === navOptions.timeline ? "" : "hidden"}
                 teams={teams}
                 throws={throws}
+                actionCount={actionCount}
                 timeline={timeline}
                 setTimeline={setTimeline}
             />}
 
             {navIndex === navOptions.teams && <TeamSetup
                 teams={teams}
-                throws={throws}
+                actionCount={actionCount}
                 setTeams={setTeams}
                 reset={reset}
             />}
