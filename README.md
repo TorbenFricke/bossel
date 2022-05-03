@@ -10,10 +10,8 @@ The app is built using React and Tailwind.
 
 You can run the App directly from GitHub and install it like any PWA.
 
-## [Run the App](https://torbenfricke.github.io/bossel/)
+## [Run the App](https://torbenfricke.github.io/bossel/) | [iOS and Android Install Instuctions](https://mobilesyrup.com/2020/05/24/how-install-progressive-web-app-pwa-android-ios-pc-mac/)
 
-
-#### [iOS and Android Install Instuctions](https://mobilesyrup.com/2020/05/24/how-install-progressive-web-app-pwa-android-ios-pc-mac/)
 
 <p align="center">
   <img src="https://github.com/TorbenFricke/bossel/raw/master/img/banner.gif" width="300px"/>
