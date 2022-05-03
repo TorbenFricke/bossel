@@ -3,7 +3,7 @@
 A mobile first PWA to keep track of the [Boßel](https://de.wikipedia.org/wiki/Bo%C3%9Feln) score. 
 The app is built using React and Tailwind.
 
-- Offline storage using the browsers localstorage ([Boßel](https://developer.mozilla.org/de/docs/Web/API/Window/localStorage))
+- Offline storage using the browsers ([localstorage](https://developer.mozilla.org/de/docs/Web/API/Window/localStorage))
 - Arbitrary number of teams
 - Light and dark mode
 - Easy undo and redo
