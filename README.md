@@ -15,7 +15,11 @@ You can run the App directly from GitHub and install it like any PWA.
 
 #### [iOS and Android Install Instuctions](https://mobilesyrup.com/2020/05/24/how-install-progressive-web-app-pwa-android-ios-pc-mac/)
 
-![Alt Text](img/banner.gif)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/TorbenFricke/bossel/master/img/bossel.gif" width="200px"/>
+</p>
+
+![Alt Text](img/banner.gif | width=200)
 
 ## More Screenshots 
 
